@@ -10,17 +10,22 @@ import (
 
 // ValidateStorage validates storage configuration.
 func ValidateStorage(config schema.Storage, validator *schema.StructValidator) {
-	if config.Local == nil && config.MySQL == nil && config.PostgreSQL == nil {
+	switch countNotNil(config.PostgreSQL, config.MSSQL, config.MySQL, config.Local) {
+	case 0:
 		validator.Push(errors.New(errStrStorage))
-	}
-
-	switch {
-	case config.MySQL != nil:
-		validateMySQLConfiguration(config.MySQL, validator)
-	case config.PostgreSQL != nil:
-		validatePostgreSQLConfiguration(config.PostgreSQL, validator)
-	case config.Local != nil:
-		validateLocalStorageConfiguration(config.Local, validator)
+	case 1:
+		switch {
+		case config.MySQL != nil:
+			validateMySQLConfiguration(config.MySQL, validator)
+		case config.MSSQL != nil:
+			validateMSSQLConfiguration(config.MSSQL, validator)
+		case config.PostgreSQL != nil:
+			validatePostgreSQLConfiguration(config.PostgreSQL, validator)
+		case config.Local != nil:
+			validateLocalStorageConfiguration(config.Local, validator)
+		}
+	default:
+		validator.Push(fmt.Errorf(errStrStorageMultiple))
 	}
 
 	if config.EncryptionKey == "" {
@@ -32,32 +37,17 @@ func ValidateStorage(config schema.Storage, validator *schema.StructValidator) {
 
 func validateSQLConfiguration(config, defaults *schema.StorageSQL, validator *schema.StructValidator, provider string) {
 	if config.Address == nil {
-		if config.Host == "" { //nolint:staticcheck
-			validator.Push(fmt.Errorf(errFmtStorageOptionMustBeProvided, provider, "address"))
-		} else {
-			host := config.Host //nolint:staticcheck
-			port := config.Port //nolint:staticcheck
-
-			if address, err := schema.NewAddressFromNetworkValuesDefault(host, port, schema.AddressSchemeTCP, schema.AddressSchemeUnix); err != nil {
-				validator.Push(fmt.Errorf(errFmtStorageFailedToConvertHostPortToAddress, provider, err))
-			} else {
-				config.Address = &schema.AddressTCP{Address: *address}
-			}
-		}
+		validator.Push(fmt.Errorf(errFmtStorageOptionMustBeProvided, provider, "address"))
 	} else {
-		if config.Host != "" || config.Port != 0 { //nolint:staticcheck
-			validator.Push(fmt.Errorf(errFmtStorageOptionAddressConflictWithHostPort, provider))
-		}
-
 		var err error
 
 		if err = config.Address.ValidateSQL(); err != nil {
 			validator.Push(fmt.Errorf(errFmtServerAddress, config.Address.String(), err))
 		}
-	}
 
-	if config.Address != nil && config.Address.IsTCP() && config.Address.Port() == 0 {
-		config.Address.SetPort(defaults.Address.Port())
+		if config.Address.IsTCP() && config.Address.Port() == 0 {
+			config.Address.SetPort(defaults.Address.Port())
+		}
 	}
 
 	if config.Username == "" || config.Password == "" {
@@ -73,7 +63,28 @@ func validateSQLConfiguration(config, defaults *schema.StorageSQL, validator *sc
 	}
 }
 
+func validateSQLDeprecatedConfiguration(config *schema.StorageSQL, deprecated schema.StorageSQLDeprecated, validator *schema.StructValidator, provider string) {
+	switch {
+	case config.Address == nil:
+		host := deprecated.Host //nolint:staticcheck
+		port := deprecated.Port //nolint:staticcheck
+
+		if host == "" && port == 0 {
+			return
+		}
+
+		if address, err := schema.NewAddressFromNetworkValuesDefault(host, port, schema.AddressSchemeTCP, schema.AddressSchemeUnix); err != nil {
+			validator.Push(fmt.Errorf(errFmtStorageFailedToConvertHostPortToAddress, provider, err))
+		} else {
+			config.Address = &schema.AddressTCP{Address: *address}
+		}
+	case deprecated.Host != "" || deprecated.Port != 0:
+		validator.Push(fmt.Errorf(errFmtStorageOptionAddressConflictWithHostPort, provider))
+	}
+}
+
 func validateMySQLConfiguration(config *schema.StorageMySQL, validator *schema.StructValidator) {
+	validateSQLDeprecatedConfiguration(&config.StorageSQL, config.StorageSQLDeprecated, validator, "mysql")
 	validateSQLConfiguration(&config.StorageSQL, &schema.DefaultMySQLStorageConfiguration.StorageSQL, validator, "mysql")
 
 	if config.TLS != nil {
@@ -92,7 +103,35 @@ func validateMySQLConfiguration(config *schema.StorageMySQL, validator *schema.S
 	}
 }
 
+func validateMSSQLConfiguration(config *schema.StorageMSSQL, validator *schema.StructValidator) {
+	validateSQLConfiguration(&config.StorageSQL, &schema.DefaultMSSQLStorageConfiguration.StorageSQL, validator, "mssql")
+
+	if config.Schema == "" {
+		config.Schema = schema.DefaultMSSQLStorageConfiguration.Schema
+	}
+
+	if config.Instance == "" {
+		config.Instance = schema.DefaultMSSQLStorageConfiguration.Instance
+	}
+
+	if config.TLS != nil {
+		configDefaultTLS := &schema.TLS{
+			MinimumVersion: schema.DefaultMSSQLStorageConfiguration.TLS.MinimumVersion,
+			MaximumVersion: schema.DefaultMSSQLStorageConfiguration.TLS.MaximumVersion,
+		}
+
+		if config.Address != nil {
+			configDefaultTLS.ServerName = config.Address.Hostname()
+		}
+
+		if err := ValidateTLSConfig(config.TLS, configDefaultTLS); err != nil {
+			validator.Push(fmt.Errorf(errFmtStorageTLSConfigInvalid, "mssql", err))
+		}
+	}
+}
+
 func validatePostgreSQLConfiguration(config *schema.StoragePostgreSQL, validator *schema.StructValidator) {
+	validateSQLDeprecatedConfiguration(&config.StorageSQL, config.StorageSQLDeprecated, validator, "postgres")
 	validateSQLConfiguration(&config.StorageSQL, &schema.DefaultPostgreSQLStorageConfiguration.StorageSQL, validator, "postgres")
 
 	if config.Schema == "" {

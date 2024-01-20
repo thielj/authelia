@@ -32,7 +32,7 @@ func (suite *StorageSuite) TestShouldValidateOneStorageIsConfigured() {
 
 	suite.Require().Len(suite.val.Warnings(), 0)
 	suite.Require().Len(suite.val.Errors(), 1)
-	suite.Assert().EqualError(suite.val.Errors()[0], "storage: configuration for a 'local', 'mysql' or 'postgres' database must be provided")
+	suite.Assert().EqualError(suite.val.Errors()[0], "storage: configuration for a 'postgres', 'mssql', 'mysql', or 'local' database must be provided")
 }
 
 func (suite *StorageSuite) TestShouldValidateLocalPathIsProvided() {
@@ -68,10 +68,12 @@ func (suite *StorageSuite) TestShouldValidateMySQLHostUsernamePasswordAndDatabas
 	suite.val.Clear()
 	suite.config.MySQL = &schema.StorageMySQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "localhost",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "localhost",
 		},
 	}
 	ValidateStorage(suite.config, suite.val)
@@ -105,10 +107,12 @@ func (suite *StorageSuite) TestShouldSetDefaultMySQLTLSServerName() {
 func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidMySQLTLSVersion() {
 	suite.config.MySQL = &schema.StorageMySQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		TLS: &schema.TLS{
 			MinimumVersion: schema.TLSVersion{Value: tls.VersionSSL30}, //nolint:staticcheck
@@ -126,10 +130,12 @@ func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidMySQLTLSVersion() {
 func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidMySQLTLSMinVersionGreaterThanMaximum() {
 	suite.config.MySQL = &schema.StorageMySQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		TLS: &schema.TLS{
 			MinimumVersion: schema.TLSVersion{Value: tls.VersionTLS13},
@@ -148,6 +154,9 @@ func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidMySQLTLSMinVersionGreate
 func (suite *StorageSuite) TestShouldValidatePostgreSQLHostUsernamePasswordAndDatabaseAreProvided() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{}
 	suite.config.MySQL = nil
+	suite.config.Local = nil
+	suite.config.MSSQL = nil
+
 	ValidateStorage(suite.config, suite.val)
 
 	suite.Require().Len(suite.val.Errors(), 3)
@@ -158,10 +167,12 @@ func (suite *StorageSuite) TestShouldValidatePostgreSQLHostUsernamePasswordAndDa
 	suite.val.Clear()
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "postgre",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "postgre",
 		},
 	}
 	ValidateStorage(suite.config, suite.val)
@@ -173,10 +184,12 @@ func (suite *StorageSuite) TestShouldValidatePostgreSQLHostUsernamePasswordAndDa
 func (suite *StorageSuite) TestShouldValidatePostgresSchemaDefault() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 	}
 
@@ -194,10 +207,12 @@ func (suite *StorageSuite) TestShouldValidatePostgresSchemaDefault() {
 func (suite *StorageSuite) TestShouldValidatePostgresTLSDefaults() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		TLS: &schema.TLS{},
 	}
@@ -216,10 +231,12 @@ func (suite *StorageSuite) TestShouldValidatePostgresTLSDefaults() {
 func (suite *StorageSuite) TestShouldSetDefaultPostgreSQLTLSServerName() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "mysql1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "mysql1",
 		},
 		TLS: &schema.TLS{
 			MinimumVersion: schema.TLSVersion{Value: tls.VersionTLS12},
@@ -237,10 +254,12 @@ func (suite *StorageSuite) TestShouldSetDefaultPostgreSQLTLSServerName() {
 func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidPostgreSQLTLSVersion() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		TLS: &schema.TLS{
 			MinimumVersion: schema.TLSVersion{Value: tls.VersionSSL30}, //nolint:staticcheck
@@ -258,10 +277,12 @@ func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidPostgreSQLTLSVersion() {
 func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidPostgreSQLMinVersionGreaterThanMaximum() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		TLS: &schema.TLS{
 			MinimumVersion: schema.TLSVersion{Value: tls.VersionTLS13},
@@ -280,10 +301,12 @@ func (suite *StorageSuite) TestShouldRaiseErrorOnInvalidPostgreSQLMinVersionGrea
 func (suite *StorageSuite) TestShouldValidatePostgresSSLDefaults() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		SSL: &schema.StoragePostgreSQLSSL{},
 	}
@@ -302,10 +325,12 @@ func (suite *StorageSuite) TestShouldValidatePostgresSSLDefaults() {
 func (suite *StorageSuite) TestShouldRaiseErrorOnTLSAndLegacySSL() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		SSL: &schema.StoragePostgreSQLSSL{},
 		TLS: &schema.TLS{},
@@ -322,10 +347,12 @@ func (suite *StorageSuite) TestShouldRaiseErrorOnTLSAndLegacySSL() {
 func (suite *StorageSuite) TestShouldValidatePostgresDefaultsDontOverrideConfiguration() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db1",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		Schema: "authelia",
 		SSL: &schema.StoragePostgreSQLSSL{
@@ -347,10 +374,12 @@ func (suite *StorageSuite) TestShouldValidatePostgresDefaultsDontOverrideConfigu
 func (suite *StorageSuite) TestShouldValidatePostgresSSLModeMustBeValid() {
 	suite.config.PostgreSQL = &schema.StoragePostgreSQL{
 		StorageSQL: schema.StorageSQL{
-			Host:     "db2",
 			Username: "myuser",
 			Password: "pass",
 			Database: "database",
+		},
+		StorageSQLDeprecated: schema.StorageSQLDeprecated{
+			Host: "db1",
 		},
 		SSL: &schema.StoragePostgreSQLSSL{
 			Mode: "unknown",

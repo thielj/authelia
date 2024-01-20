@@ -2,7 +2,7 @@
 title: "OAuth 2.0 Bearer Token Usage"
 description: "An introduction into utilizing the Authelia OAuth 2.0 Provider as an authorization method"
 lead: "An introduction into utilizing the Authelia OAuth 2.0 Provider as an authorization method."
-date: 2024-01-01T13:17:53+11:00
+date: 2024-01-20T12:34:58+11:00
 draft: false
 images: []
 menu:

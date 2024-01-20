@@ -8,7 +8,7 @@ images: []
 menu:
   configuration:
     parent: "storage"
-weight: 107600
+weight: 107700
 toc: true
 aliases:
   - /docs/configuration/storage/mariadb.html

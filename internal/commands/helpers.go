@@ -16,6 +16,8 @@ func getStorageProvider(ctx *CmdCtx) (provider storage.Provider) {
 	switch {
 	case ctx.config.Storage.PostgreSQL != nil:
 		return storage.NewPostgreSQLProvider(ctx.config, ctx.trusted)
+	case ctx.config.Storage.MSSQL != nil:
+		return storage.NewMSSQLProvider(ctx.config, ctx.trusted)
 	case ctx.config.Storage.MySQL != nil:
 		return storage.NewMySQLProvider(ctx.config, ctx.trusted)
 	case ctx.config.Storage.Local != nil:

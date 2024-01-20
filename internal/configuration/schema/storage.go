@@ -10,6 +10,7 @@ import (
 type Storage struct {
 	Local      *StorageLocal      `koanf:"local" json:"local" jsonschema:"title=Local" jsonschema_description:"The Local SQLite3 Storage configuration settings"`
 	MySQL      *StorageMySQL      `koanf:"mysql" json:"mysql" jsonschema:"title=MySQL" jsonschema_description:"The MySQL/MariaDB Storage configuration settings"`
+	MSSQL      *StorageMSSQL      `koanf:"mssql" json:"mssql" jsonschema:"title=Microsoft SQL" jsonschema_description:"The Microsoft SQL Storage configuration settings"`
 	PostgreSQL *StoragePostgreSQL `koanf:"postgres" json:"postgres" jsonschema:"title=PostgreSQL" jsonschema_description:"The PostgreSQL Storage configuration settings"`
 
 	EncryptionKey string `koanf:"encryption_key" json:"encryption_key" jsonschema:"title=Encryption Key" jsonschema_description:"The Storage Encryption Key used to secure security sensitive values in the storage engine"`
@@ -27,7 +28,10 @@ type StorageSQL struct {
 	Username string        `koanf:"username" json:"username" jsonschema:"title=Username" jsonschema_description:"The username to use to authenticate"`
 	Password string        `koanf:"password" json:"password" jsonschema:"title=Password" jsonschema_description:"The password to use to authenticate"`
 	Timeout  time.Duration `koanf:"timeout" json:"timeout" jsonschema:"default=5 seconds,title=Timeout" jsonschema_description:"The timeout for the database connection"`
+}
 
+// StorageSQLDeprecated represents the deprecated configuration of the SQL database.
+type StorageSQLDeprecated struct {
 	// Deprecated: use address instead.
 	Host string `koanf:"host" json:"host" jsonschema:"deprecated,title=Host"`
 
@@ -37,15 +41,28 @@ type StorageSQL struct {
 
 // StorageMySQL represents the configuration of a MySQL database.
 type StorageMySQL struct {
+	StorageSQL           `koanf:",squash"`
+	StorageSQLDeprecated `koanf:",squash"`
+
+	TLS *TLS `koanf:"tls" json:"tls"`
+}
+
+// StorageMSSQL represents the configuration of a Microsoft SQL database.
+type StorageMSSQL struct {
 	StorageSQL `koanf:",squash"`
+
+	Instance string `koanf:"instance" json:"instance" jsonschema:"default=public,title=Instance" jsonschema_description:"The instance name to use"`
+	Schema   string `koanf:"schema" json:"schema" jsonschema:"default=public,title=Schema" jsonschema_description:"The default schema name to use"`
 
 	TLS *TLS `koanf:"tls" json:"tls"`
 }
 
 // StoragePostgreSQL represents the configuration of a PostgreSQL database.
 type StoragePostgreSQL struct {
-	StorageSQL `koanf:",squash"`
-	Schema     string `koanf:"schema" json:"schema" jsonschema:"default=public,title=Schema" jsonschema_description:"The default schema name to use"`
+	StorageSQL           `koanf:",squash"`
+	StorageSQLDeprecated `koanf:",squash"`
+
+	Schema string `koanf:"schema" json:"schema" jsonschema:"default=public,title=Schema" jsonschema_description:"The default schema name to use"`
 
 	TLS *TLS `koanf:"tls" json:"tls"`
 
@@ -71,6 +88,18 @@ var DefaultMySQLStorageConfiguration = StorageMySQL{
 	StorageSQL: StorageSQL{
 		Address: &AddressTCP{Address{true, false, -1, 3306, &url.URL{Scheme: AddressSchemeTCP, Host: "localhost:3306"}}},
 	},
+	TLS: &TLS{
+		MinimumVersion: TLSVersion{tls.VersionTLS12},
+	},
+}
+
+// DefaultMSSQLStorageConfiguration represents the default Microsoft SQL configuration.
+var DefaultMSSQLStorageConfiguration = StorageMSSQL{
+	StorageSQL: StorageSQL{
+		Address: &AddressTCP{Address{true, false, -1, 1433, &url.URL{Scheme: AddressSchemeTCP, Host: "localhost:1433"}}},
+	},
+	Instance: "MSSQLSERVER",
+	Schema:   "dbo",
 	TLS: &TLS{
 		MinimumVersion: TLSVersion{tls.VersionTLS12},
 	},

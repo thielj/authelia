@@ -2,7 +2,7 @@
 title: "Elevated Session"
 description: "Elevated Session Identity Validation Configuration"
 lead: "Authelia uses multiple methods to verify the identity of users to prevent a malicious user from performing actions on behalf of them. This section describes the Elevated Session method."
-date: 2023-12-30T07:23:12+11:00
+date: 2024-01-20T12:34:11+11:00
 draft: false
 images: []
 menu:

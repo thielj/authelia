@@ -44,5 +44,6 @@ this instance if you wanted to downgrade to pre1 you would need to use an Authel
 |       13       |      4.38.0      |                   One-Time Password for Identity Verification via Email Changes                    |
 |       14       |      4.38.0      |                                    Revoke Reset Password Token                                     |
 |       15       |      4.38.0      |                         Time-based One-Time Password security enhancement                          |
+|       16       |      4.38.0      |                                Microsoft SQL Server provider added                                 |
 
 [RFC9068]: https://datatracker.ietf.org/doc/html/rfc9068

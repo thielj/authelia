@@ -7,6 +7,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rsa"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"golang.org/x/net/publicsuffix"
@@ -16,6 +17,18 @@ import (
 	"github.com/authelia/authelia/v4/internal/oidc"
 	"github.com/authelia/authelia/v4/internal/utils"
 )
+
+func countNotNil(values ...any) (count int) {
+	for _, value := range values {
+		if value == nil || reflect.ValueOf(value).IsNil() {
+			continue
+		}
+
+		count++
+	}
+
+	return count
+}
 
 func isCookieDomainAPublicSuffix(domain string) (valid bool) {
 	var suffix string
