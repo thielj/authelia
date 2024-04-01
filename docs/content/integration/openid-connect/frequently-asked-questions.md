@@ -50,12 +50,12 @@ separately.
 
 {{< envTabs "Generate a Random Client ID" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a Random Client ID..."}
 $ docker run authelia/authelia:latest authelia crypto rand --length 72 --charset rfc3986
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a Random Client ID..."}
 $ authelia crypto rand --length 72 --charset rfc3986
 ```
 {{< /envTab >}}
@@ -76,12 +76,12 @@ separately.
 
 {{< envTabs "Generate a Random Client Secret" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a Random Client Secret..."}
 $ docker run authelia/authelia:latest authelia crypto hash generate pbkdf2 --variant sha512 --random --random.length 72 --random.charset rfc3986
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a Random Client Secret..."}
 $ authelia crypto hash generate pbkdf2 --variant sha512 --random --random.length 72 --random.charset rfc3986
 ```
 {{< /envTab >}}

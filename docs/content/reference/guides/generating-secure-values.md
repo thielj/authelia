@@ -27,14 +27,14 @@ string and the hash at the same time.
 Use the `authelia crypto hash generate --help` command or see the [authelia crypto hash generate] reference guide for
 more information on all available options and algorithms.
 
-{{< envTabs "Generate Random Password" >}}
+{{< envTabs "Generate a Random Password" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a Random Password..."}
 $ docker run authelia/authelia:latest authelia crypto hash generate argon2 --random --random.length 64 --random.charset alphanumeric
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a Random Password..."}
 $ authelia crypto hash generate argon2 --random --random.length 64 --random.charset alphanumeric
 ```
 {{< /envTab >}}
@@ -52,14 +52,14 @@ The __Authelia__ docker container or CLI binary can be used to generate a random
 Use the `authelia crypto rand --help` command or see the [authelia crypto rand] reference guide for more information on
 all available options.
 
-{{< envTabs "Generate Random String" >}}
+{{< envTabs "Generate A Random String" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a Random String..."}
 $ docker run authelia/authelia:latest authelia crypto rand --length 64 --charset alphanumeric
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a Random String..."}
 $ authelia crypto rand --length 64 --charset alphanumeric
 ```
 {{< /envTab >}}
@@ -96,12 +96,12 @@ information on all available options.
 
 {{< envTabs "Generate RSA Key Pair" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a RSA Key Pair..."}
 $ docker run -u "$(id -u):$(id -g)" -v "$(pwd)":/keys authelia/authelia:latest authelia crypto pair rsa generate --bits 4096 --directory /keys
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a RSA Key Pair..."}
 $ authelia crypto pair rsa generate --directory /path/to/keys
 ```
 {{< /envTab >}}
@@ -131,12 +131,12 @@ information on all available options.
 
 {{< envTabs "Generate RSA Key Pair" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate a RSA Private Key and Certificate..."}
 $ docker run -u "$(id -u):$(id -g)" -v "$(pwd)":/keys authelia/authelia:latest authelia crypto certificate rsa generate --common-name example.com --directory /keys
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate a RSA Private Key and Certificate..."}
 $ authelia crypto certificate rsa generate --common-name example.com --directory /path/to/keys
 ```
 {{< /envTab >}}

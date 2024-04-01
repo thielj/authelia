@@ -45,12 +45,12 @@ following syntax:
 
 {{< envTabs "Validate Configuration" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Validate Configuration..."}
 $ docker run authelia/authelia:latest authelia --config config.custom.yml
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Validate Configuration..."}
 $ authelia --config config.custom.yml
 ```
 {{< /envTab >}}
@@ -73,20 +73,20 @@ the last one to be specified is the one that takes precedence. Example:
 
 {{< envTabs "Run With Multiple Configurations" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Run With Multiple Configurations..."}
 $ docker run -d authelia/authelia:latest authelia --config configuration.yml --config config-acl.yml --config config-other.yml
 ```
 
-```bash
+```bash {title="Run With Multiple Configurations (Single Argument)..."}
 $ docker run -d authelia/authelia:latest authelia --config configuration.yml,config-acl.yml,config-other.yml
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Run With Multiple Configurations..."}
 $ authelia --config configuration.yml --config config-acl.yml --config config-other.yml
 ```
 
-```bash
+```bash {title="Run With Multiple Configurations (Single Argument)..."}
 $ authelia --config configuration.yml,config-acl.yml,config-other.yml
 ```
 {{< /envTab >}}
@@ -203,12 +203,12 @@ Examples:
 
 {{< envTabs "Filters By Argument" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Run With Filters from Arguments..."}
 $ docker run -d authelia/authelia:latest authelia --config /config/configuration.yml --config.experimental.filters expand-env,template
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Run With Filters from Arguments..."}
 $ authelia --config /config/configuration.yml --config.experimental.filters expand-env,template
 ```
 {{< /envTab >}}
@@ -216,12 +216,12 @@ $ authelia --config /config/configuration.yml --config.experimental.filters expa
 
 {{< envTabs "Filters By Environment" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Run With Filters from Environment..."}
 $ docker run -d -e X_AUTHELIA_CONFIG_FILTERS=expand-env,template -e X_AUTHELIA_CONFIG=/config/configuration.yml authelia/authelia:latest authelia
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Run With Filters from Environment..."}
 $ X_AUTHELIA_CONFIG_FILTERS=expand-env,template X_AUTHELIA_CONFIG=/config/configuration.yml authelia
 ```
 {{< /envTab >}}

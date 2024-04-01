@@ -70,19 +70,19 @@ console prompt, especially if it has  special characters to prevent parameter su
 
 {{< envTabs "Generate Password" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate Password..."}
 $ docker run authelia/authelia:latest authelia crypto hash generate argon2 --password 'password'
 ```
 {{< /envTab >}}
 {{< envTab "Bare-Metal" >}}
-```bash
+```bash {title="Generate Password..."}
 $ authelia crypto hash generate argon2 --password 'password'
 ```
 {{< /envTab >}}
 {{< /envTabs >}}
 
 Output Example:
-```bash
+```bash {frame="none"}
 Digest: $argon2id$v=19$m=65536,t=3,p=4$Hjc8e7WYcBFcJmEDUOsS9A$ozM7RyZR1EyDR8cuyVpDDfmLrGPGFgo5E2NNqRumui4
 ```
 
@@ -92,12 +92,12 @@ in the current directory:
 
 {{< envTabs "Generate Password (Interactive)" >}}
 {{< envTab "Docker" >}}
-```bash
+```bash {title="Generate Password with Configuration..."}
 $ docker run -v ./configuration.yml:/configuration.yml -it authelia/authelia:latest authelia crypto hash generate --config /configuration.yml
 ```
 {{< /envTab >}}
 {{< envTab "Bare Metal" >}}
-```bash
+```bash {title="Generate Password with Configuration..."}
 $ authelia crypto hash generate --config /configuration.yml
 ```
 {{< /envTab >}}
@@ -105,7 +105,7 @@ $ authelia crypto hash generate --config /configuration.yml
 
 Output Example:
 
-```bash
+```bash {frame="none"}
 Enter Password:
 Confirm Password:
 
