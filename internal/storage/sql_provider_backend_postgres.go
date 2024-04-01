@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	pgx "github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"
 
 	"github.com/authelia/authelia/v4/internal/configuration/schema"
