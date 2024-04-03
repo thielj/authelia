@@ -97,13 +97,13 @@ func OpenIDConnectUserinfo(ctx *middlewares.AutheliaCtx, rw http.ResponseWriter,
 	var detailer oidc.UserDetailer
 
 	if detailer, err = oidcDetailerFromClaims(ctx, original); err != nil {
-		oidc.GrantUserInfoClaims(strategy, client, requester.GetGrantedScopes(), nil, original, claims)
+		oidc.GrantScopedClaims(strategy, client, requester.GetGrantedScopes(), nil, original, claims)
 
 		if userinfo {
 			ctx.Logger.WithError(err).Errorf("UserInfo Request with id '%s' on client with id '%s' error occurred loading user information", requestID, client.GetID())
 		}
 	} else {
-		oidc.GrantUserInfoClaims(strategy, client, requester.GetGrantedScopes(), detailer, original, claims)
+		oidc.GrantScopedClaims(strategy, client, requester.GetGrantedScopes(), detailer, original, claims)
 		oidc.GrantClaimRequests(strategy, client, requests, detailer, claims)
 	}
 

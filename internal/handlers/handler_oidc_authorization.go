@@ -140,10 +140,17 @@ func OpenIDConnectAuthorization(ctx *middlewares.AutheliaCtx, rw http.ResponseWr
 		return
 	}
 
+	oidc.GrantScopeAudienceConsent(requester, consent)
+
 	extra := map[string]any{}
 
-	oidc.GrantClaimRequests(ctx.Providers.OpenIDConnect.GetScopeStrategy(ctx), client, requests.GetIDTokenRequests(), details, extra)
-	oidc.GrantScopeAudienceConsent(requester, consent)
+	strategy := ctx.Providers.OpenIDConnect.GetScopeStrategy(ctx)
+
+	oidc.GrantClaimRequests(strategy, client, requests.GetIDTokenRequests(), details, extra)
+
+	if requester.GetResponseTypes().Has("id_token") && !requester.GetResponseTypes().Has("token") && !requester.GetResponseTypes().Has("code") {
+		oidc.GrantScopedClaims(strategy, client, requester.GetGrantedScopes(), details, nil, extra)
+	}
 
 	if authTime, err = userSession.AuthenticatedTime(client.GetAuthorizationPolicyRequiredLevel(authorization.Subject{Username: details.Username, Groups: details.Groups, IP: ctx.RemoteIP()})); err != nil {
 		ctx.Logger.Errorf("Authorization Request with id '%s' on client with id '%s' could not be processed: error occurred checking authentication time: %+v", requester.GetID(), client.GetID(), err)

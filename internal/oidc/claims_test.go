@@ -68,7 +68,7 @@ func TestGrantClaimsUserInfo(t *testing.T) {
 			extra := map[string]any{}
 
 			oidc.GrantClaimRequests(strategy, tc.client, tc.requests, tc.detailer, extra)
-			oidc.GrantUserInfoClaims(strategy, tc.client, tc.scopes, tc.detailer, tc.claims, extra)
+			oidc.GrantScopedClaims(strategy, tc.client, tc.scopes, tc.detailer, tc.claims, extra)
 
 			assert.EqualValues(t, tc.expected, extra)
 		})

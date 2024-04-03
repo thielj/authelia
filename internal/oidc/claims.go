@@ -272,9 +272,9 @@ func grantRequestedClaim(strategy oauthelia2.ScopeStrategy, client Client, scope
 	}
 }
 
-// GrantUserInfoClaims copies the extra claims from the ID Token that may be useful while excluding
+// GrantScopedClaims copies the extra claims from the ID Token that may be useful while excluding
 // OpenID Connect 1.0 Special Claims, OpenID Connect 1.0 Scope-based Claims which should be granted by GrantClaimRequests.
-func GrantUserInfoClaims(strategy oauthelia2.ScopeStrategy, client Client, scopes oauthelia2.Arguments, detailer UserDetailer, original, claims map[string]any) {
+func GrantScopedClaims(strategy oauthelia2.ScopeStrategy, client Client, scopes oauthelia2.Arguments, detailer UserDetailer, original, claims map[string]any) {
 	for claim, value := range original {
 		switch claim {
 		case ClaimJWTID, ClaimSessionID, ClaimAccessTokenHash, ClaimCodeHash, ClaimExpirationTime, ClaimNonce, ClaimStateHash:
