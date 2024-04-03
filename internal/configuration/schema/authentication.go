@@ -136,9 +136,9 @@ type AuthenticationBackendLDAPAttributes struct {
 	DistinguishedName string `koanf:"distinguished_name" json:"distinguished_name" jsonschema:"title=Attribute: Distinguished Name" jsonschema_description:"The directory server attribute which contains the distinguished name for all objects."`
 	Username          string `koanf:"username" json:"username" jsonschema:"title=Attribute: User Username" jsonschema_description:"The directory server attribute which contains the username for all users."`
 	DisplayName       string `koanf:"display_name" json:"display_name" jsonschema:"title=Attribute: User Display Name" jsonschema_description:"The directory server attribute which contains the display name for all users."`
+	FamilyName        string `koanf:"family_name" json:"family_name" jsonschema:"title=Attribute: Family Name" jsonschema_description:"The directory server attribute which contains the family name for all users."`
 	GivenName         string `koanf:"given_name" json:"given_name" jsonschema:"title=Attribute: Given Name" jsonschema_description:"The directory server attribute which contains the given name for all users."`
 	MiddleName        string `koanf:"middle_name" json:"middle_name" jsonschema:"title=Attribute: Middle Name" jsonschema_description:"The directory server attribute which contains the middle name for all users."`
-	FamilyName        string `koanf:"family_name" json:"family_name" jsonschema:"title=Attribute: Family Name" jsonschema_description:"The directory server attribute which contains the family name for all users."`
 	Nickname          string `koanf:"nickname" json:"nickname" jsonschema:"title=Attribute: Nickname" jsonschema_description:"The directory server attribute which contains the nickname for all users."`
 	Gender            string `koanf:"gender" json:"gender" jsonschema:"title=Attribute: Gender" jsonschema_description:"The directory server attribute which contains the gender for all users."`
 	Birthdate         string `koanf:"birthdate" json:"birthdate" jsonschema:"title=Attribute: Birthdate" jsonschema_description:"The directory server attribute which contains the birthdate for all users."`
@@ -238,7 +238,17 @@ var DefaultLDAPAuthenticationBackendConfigurationImplementationActiveDirectory =
 		DistinguishedName: ldapAttrDistinguishedName,
 		Username:          ldapAttrSAMAccountName,
 		DisplayName:       ldapAttrDisplayName,
+		FamilyName:        ldapAttrSurname,
+		GivenName:         ldapAttrGivenName,
+		MiddleName:        ldapAttrMiddleName,
+		Website:           "wWWHomePage",
 		Mail:              ldapAttrMail,
+		PhoneNumber:       "telephoneNumber",
+		StreetAddress:     "streetAddress",
+		Locality:          "l",
+		Region:            "st",
+		PostalCode:        "postalCode",
+		Country:           "c",
 		MemberOf:          ldapAttrMemberOf,
 		GroupName:         ldapAttrCommonName,
 	},
