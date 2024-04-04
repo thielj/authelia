@@ -82,6 +82,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 					ClaimPhoneNumber,
 					ClaimPhoneNumberVerified,
 					ClaimAddress,
+					ClaimUpdatedAt,
 				},
 				TokenEndpointAuthMethodsSupported: []string{
 					ClientAuthMethodClientSecretBasic,

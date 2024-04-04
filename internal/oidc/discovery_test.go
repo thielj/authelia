@@ -226,7 +226,7 @@ func TestNewOpenIDConnectProvider_GetOpenIDConnectWellKnownConfiguration(t *test
 	assert.Equal(t, []string{oidc.SigningAlgRSAUsingSHA256, oidc.SigningAlgNone}, disco.UserinfoSigningAlgValuesSupported)
 	assert.Equal(t, []string{oidc.SigningAlgRSAUsingSHA256, oidc.SigningAlgRSAUsingSHA384, oidc.SigningAlgRSAUsingSHA512, oidc.SigningAlgECDSAUsingP256AndSHA256, oidc.SigningAlgECDSAUsingP384AndSHA384, oidc.SigningAlgECDSAUsingP521AndSHA512, oidc.SigningAlgRSAPSSUsingSHA256, oidc.SigningAlgRSAPSSUsingSHA384, oidc.SigningAlgRSAPSSUsingSHA512, oidc.SigningAlgNone}, disco.RequestObjectSigningAlgValuesSupported)
 
-	assert.Len(t, disco.ClaimsSupported, 32)
+	assert.Len(t, disco.ClaimsSupported, 33)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthenticationMethodsReference)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAudience)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthorizedParty)
@@ -259,6 +259,7 @@ func TestNewOpenIDConnectProvider_GetOpenIDConnectWellKnownConfiguration(t *test
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPhoneNumber)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPhoneNumberVerified)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAddress)
+	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimUpdatedAt)
 
 	assert.Len(t, disco.PromptValuesSupported, 2)
 	assert.Contains(t, disco.PromptValuesSupported, oidc.PromptConsent)
@@ -341,7 +342,7 @@ func TestNewOpenIDConnectProvider_GetOAuth2WellKnownConfiguration(t *testing.T) 
 	assert.Contains(t, disco.GrantTypesSupported, oidc.GrantTypeClientCredentials)
 	assert.Contains(t, disco.GrantTypesSupported, oidc.GrantTypeRefreshToken)
 
-	assert.Len(t, disco.ClaimsSupported, 32)
+	assert.Len(t, disco.ClaimsSupported, 33)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthenticationMethodsReference)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAudience)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthorizedParty)
@@ -374,6 +375,7 @@ func TestNewOpenIDConnectProvider_GetOAuth2WellKnownConfiguration(t *testing.T) 
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPhoneNumber)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPhoneNumberVerified)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAddress)
+	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimUpdatedAt)
 }
 
 func TestNewOpenIDConnectProvider_GetOpenIDConnectWellKnownConfigurationWithPlainPKCE(t *testing.T) {

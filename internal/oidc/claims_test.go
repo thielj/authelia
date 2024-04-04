@@ -49,7 +49,7 @@ func TestGrantClaimsUserInfo(t *testing.T) {
 	}{
 		{
 			"ShouldGrantUserInfoClaims",
-			&oidc.RegisteredClient{},
+			&oidc.RegisteredClient{ID: "example"},
 			[]string{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeGroups, oidc.ScopeEmail},
 			nil,
 			&testDetailer{
@@ -58,8 +58,36 @@ func TestGrantClaimsUserInfo(t *testing.T) {
 				name:     "John Smith",
 				emails:   []string{"john.smith@authelia.com"},
 			},
-			map[string]any{"auth_time": 123},
-			map[string]any{"auth_time": 123, "email": "john.smith@authelia.com", "email_verified": true, "groups": []string{"abc", "123"}, "name": "John Smith", "preferred_username": "john"},
+			map[string]any{oidc.ClaimAuthenticationTime: 123},
+			map[string]any{oidc.ClaimAuthenticationTime: 123, oidc.ClaimEmail: "john.smith@authelia.com", oidc.ClaimEmailVerified: true, oidc.ClaimGroups: []string{"abc", "123"}, oidc.ClaimFullName: "John Smith", oidc.ClaimPreferredUsername: "john", oidc.ClaimAudience: []string{"example"}},
+		},
+		{
+			"ShouldGrantUserInfoClaimsMultipleEmails",
+			&oidc.RegisteredClient{ID: "example"},
+			[]string{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeGroups, oidc.ScopeEmail},
+			nil,
+			&testDetailer{
+				username: "john",
+				groups:   []string{"abc", "123"},
+				name:     "John Smith",
+				emails:   []string{"john.smith@authelia.com", "jsmith@authelia.com"},
+			},
+			map[string]any{oidc.ClaimAuthenticationTime: 123},
+			map[string]any{oidc.ClaimAuthenticationTime: 123, oidc.ClaimEmail: "john.smith@authelia.com", oidc.ClaimEmailAlts: []string{"jsmith@authelia.com"}, oidc.ClaimEmailVerified: true, oidc.ClaimGroups: []string{"abc", "123"}, oidc.ClaimFullName: "John Smith", oidc.ClaimPreferredUsername: "john", oidc.ClaimAudience: []string{"example"}},
+		},
+		{
+			"ShouldGrantUserInfoClaimsNoEmail",
+			&oidc.RegisteredClient{ID: "example"},
+			[]string{oidc.ScopeOpenID, oidc.ScopeProfile, oidc.ScopeGroups, oidc.ScopeEmail},
+			nil,
+			&testDetailer{
+				username: "john",
+				groups:   []string{"abc", "123"},
+				name:     "John Smith",
+				emails:   []string{},
+			},
+			map[string]any{oidc.ClaimAuthenticationTime: 123},
+			map[string]any{oidc.ClaimAuthenticationTime: 123, oidc.ClaimGroups: []string{"abc", "123"}, oidc.ClaimFullName: "John Smith", oidc.ClaimPreferredUsername: "john", oidc.ClaimAudience: []string{"example"}},
 		},
 	}
 
@@ -70,7 +98,13 @@ func TestGrantClaimsUserInfo(t *testing.T) {
 			oidc.GrantClaimRequests(strategy, tc.client, tc.requests, tc.detailer, extra)
 			oidc.GrantScopedClaims(strategy, tc.client, tc.scopes, tc.detailer, tc.claims, extra)
 
-			assert.EqualValues(t, tc.expected, extra)
+			for key, value := range extra {
+				if key == oidc.ClaimUpdatedAt {
+					continue
+				}
+
+				assert.Equal(t, tc.expected[key], value)
+			}
 		})
 	}
 }

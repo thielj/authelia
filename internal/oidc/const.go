@@ -59,6 +59,7 @@ const (
 	ClaimPhoneNumber                         = "phone_number"
 	ClaimPhoneNumberVerified                 = "phone_number_verified"
 	ClaimAddress                             = "address"
+	ClaimUpdatedAt                           = "updated_at"
 )
 
 const (

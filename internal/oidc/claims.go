@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"time"
 
 	oauthelia2 "authelia.com/provider/oauth2"
 
@@ -279,6 +280,8 @@ func GrantClaimRequests(strategy oauthelia2.ScopeStrategy, client Client, reques
 			if address != nil {
 				extra[ClaimAddress] = address
 			}
+		case ClaimUpdatedAt:
+			grantRequestedClaim(strategy, client, ScopeProfile, ClaimUpdatedAt, time.Now().Unix(), request, extra)
 		case ClaimEmailAlts:
 			emails := detailer.GetEmails()
 
@@ -362,6 +365,7 @@ func GrantScopedClaims(strategy oauthelia2.ScopeStrategy, client Client, scopes 
 		doClaimsApplyPossibleStringValue(claims, ClaimBirthdate, detailer.GetBirthdate())
 		doClaimsApplyPossibleStringValue(claims, ClaimZoneinfo, detailer.GetZoneInfo())
 		doClaimsApplyPossibleStringValue(claims, ClaimLocale, detailer.GetLocale())
+		claims[ClaimUpdatedAt] = time.Now().Unix()
 	}
 
 	if strategy(scopes, ScopeEmail) {

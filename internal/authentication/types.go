@@ -149,11 +149,11 @@ func (d UserDetailsExtended) GetPicture() (picture string) {
 }
 
 func (d UserDetailsExtended) GetWebsite() (website string) {
-	if d.Picture == nil {
+	if d.Website == nil {
 		return ""
 	}
 
-	return d.Picture.String()
+	return d.Website.String()
 }
 
 func (d UserDetailsExtended) GetGender() (gender string) {

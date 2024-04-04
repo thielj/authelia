@@ -262,6 +262,7 @@ func (m FileUserDatabaseUserDetails) ToExtendedUserDetails() (details *UserDetai
 		GivenName:      m.GivenName,
 		FamilyName:     m.FamilyName,
 		MiddleName:     m.MiddleName,
+		Nickname:       m.Nickname,
 		Profile:        m.Profile,
 		Picture:        m.Picture,
 		Website:        m.Website,
