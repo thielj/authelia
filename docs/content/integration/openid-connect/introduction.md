@@ -453,6 +453,7 @@ These endpoints implement OpenID Connect 1.0 Provider specifications.
 |:-------------------------------:|:--------------------------------------------------------------:|:-------------------------------------:|
 |       [JSON Web Key Set]        |               https://auth.example.com/jwks.json               |               jwks_uri                |
 |         [Authorization]         |        https://auth.example.com/api/oidc/authorization         |        authorization_endpoint         |
+|     [Device Authorization]      |     https://auth.example.com/api/oidc/device-authorization     |     device_authorization_endpoint     |
 | [Pushed Authorization Requests] | https://auth.example.com/api/oidc/pushed-authorization-request | pushed_authorization_request_endpoint |
 |             [Token]             |            https://auth.example.com/api/oidc/token             |            token_endpoint             |
 |           [UserInfo]            |           https://auth.example.com/api/oidc/userinfo           |           userinfo_endpoint           |

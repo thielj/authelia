@@ -136,6 +136,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 					ClientAuthMethodNone,
 				},
 			},
+			OAuth2DeviceAuthorizationGrantDiscoveryOptions: &OAuth2DeviceAuthorizationGrantDiscoveryOptions{},
 			OAuth2JWTIntrospectionResponseDiscoveryOptions: &OAuth2JWTIntrospectionResponseDiscoveryOptions{
 				IntrospectionSigningAlgValuesSupported: []string{
 					SigningAlgRSAUsingSHA256,
