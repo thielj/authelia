@@ -30,6 +30,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 					GrantTypeImplicit,
 					GrantTypeClientCredentials,
 					GrantTypeRefreshToken,
+					GrantTypeDeviceCode,
 				},
 				ResponseModesSupported: []string{
 					ResponseModeFormPost,
@@ -136,6 +137,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 					ClientAuthMethodNone,
 				},
 			},
+			OAuth2DeviceAuthorizationGrantDiscoveryOptions: &OAuth2DeviceAuthorizationGrantDiscoveryOptions{},
 			OAuth2JWTIntrospectionResponseDiscoveryOptions: &OAuth2JWTIntrospectionResponseDiscoveryOptions{
 				IntrospectionSigningAlgValuesSupported: []string{
 					SigningAlgRSAUsingSHA256,
