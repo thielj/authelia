@@ -9,7 +9,6 @@ import (
 	oauthelia2 "authelia.com/provider/oauth2"
 
 	"github.com/authelia/authelia/v4/internal/authentication"
-	"github.com/authelia/authelia/v4/internal/authorization"
 	"github.com/authelia/authelia/v4/internal/middlewares"
 	"github.com/authelia/authelia/v4/internal/model"
 	"github.com/authelia/authelia/v4/internal/oidc"
@@ -122,6 +121,12 @@ func OpenIDConnectAuthorization(ctx *middlewares.AutheliaCtx, rw http.ResponseWr
 		return
 	}
 
+	authTime = userSession.LastAuthenticationTime()
+
+	if !oidc.IsAuthenticationTimeCurrent(authTime, consent.RequestedAt, requester.GetRequestForm()) {
+
+	}
+
 	var requests *oidc.ClaimsRequests
 
 	if requests, err = oidc.NewClaimRequests(requester.GetRequestForm()); err != nil {
@@ -148,16 +153,8 @@ func OpenIDConnectAuthorization(ctx *middlewares.AutheliaCtx, rw http.ResponseWr
 
 	oidc.GrantClaimRequests(strategy, client, requests.GetIDTokenRequests(), details, extra)
 
-	if requester.GetResponseTypes().Has("id_token") && !requester.GetResponseTypes().Has("token") && !requester.GetResponseTypes().Has("code") {
+	if oidc.IsDirectClaimsResponseType(requester.GetResponseTypes()) {
 		oidc.GrantScopedClaims(strategy, client, requester.GetGrantedScopes(), details, nil, extra)
-	}
-
-	if authTime, err = userSession.AuthenticatedTime(client.GetAuthorizationPolicyRequiredLevel(authorization.Subject{Username: details.Username, Groups: details.Groups, IP: ctx.RemoteIP()})); err != nil {
-		ctx.Logger.Errorf("Authorization Request with id '%s' on client with id '%s' could not be processed: error occurred checking authentication time: %+v", requester.GetID(), client.GetID(), err)
-
-		ctx.Providers.OpenIDConnect.WriteAuthorizeError(ctx, rw, requester, oauthelia2.ErrServerError.WithHint("Could not obtain the authentication time."))
-
-		return
 	}
 
 	ctx.Logger.Debugf("Authorization Request with id '%s' on client with id '%s' was successfully processed, proceeding to build Authorization Response", requester.GetID(), clientID)

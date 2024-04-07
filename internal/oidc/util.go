@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -425,4 +426,43 @@ func getSectorIdentifierURICache(ctx ClientContext, cache map[string][]string, s
 	}
 
 	return redirectURIs, nil
+}
+
+// IsAuthenticationTimeCurrent returns true if the authentication time matched the given form parameters given the
+// requested time.
+func IsAuthenticationTimeCurrent(authentication, requested time.Time, form url.Values) (valid bool) {
+	if form.Has(FormParameterMaxAge) {
+		var (
+			maxAge int64
+			err    error
+		)
+
+		if maxAge, err = strconv.ParseInt(form.Get(FormParameterMaxAge), 10, 64); err != nil {
+			maxAge = 0
+		}
+
+		if maxAge == 0 && authentication.Before(requested) {
+			return false
+		}
+
+		if maxAge > 0 && authentication.Add(time.Second*time.Duration(maxAge)).Before(requested) {
+			return false
+		}
+	}
+
+	if form.Has(FormParameterPrompt) {
+		if oauthelia2.Arguments(oauthelia2.RemoveEmpty(strings.Split(form.Get(FormParameterPrompt), " "))).Has(PromptLogin) && authentication.Before(requested) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsDirectClaimsResponseType returns true if the response type values indicate the response should contain the scoped
+// claims directly in the ID Token.
+//
+// See: https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims.
+func IsDirectClaimsResponseType(responseType oauthelia2.Arguments) (direct bool) {
+	return responseType.Has("id_token") && !responseType.Has("token") && !responseType.Has("code")
 }

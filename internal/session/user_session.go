@@ -65,8 +65,19 @@ func (s *UserSession) SetTwoFactorWebAuthn(now time.Time, userPresence, userVeri
 	s.WebAuthn = nil
 }
 
-// AuthenticatedTime returns the unix timestamp this session authenticated successfully at the given level.
-func (s *UserSession) AuthenticatedTime(level authorization.Level) (authenticatedTime time.Time, err error) {
+func (s *UserSession) LastAuthenticationTime() (authTime time.Time) {
+	first := time.Unix(s.FirstFactorAuthnTimestamp, 0).UTC()
+	second := time.Unix(s.SecondFactorAuthnTimestamp, 0).UTC()
+
+	if second.After(first) {
+		return second
+	}
+
+	return first
+}
+
+// AuthenticationTime returns the unix timestamp this session authenticated successfully at the given level.
+func (s *UserSession) AuthenticationTime(level authorization.Level) (authTime time.Time, err error) {
 	switch level {
 	case authorization.OneFactor:
 		return time.Unix(s.FirstFactorAuthnTimestamp, 0).UTC(), nil

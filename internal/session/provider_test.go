@@ -86,15 +86,15 @@ func TestShouldSetSessionAuthenticationLevels(t *testing.T) {
 	session, err = provider.GetSession(ctx)
 	assert.NoError(t, err)
 
-	authAt, err := session.AuthenticatedTime(authorization.OneFactor)
+	authAt, err := session.AuthenticationTime(authorization.OneFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeOneFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.TwoFactor)
+	authAt, err = session.AuthenticationTime(authorization.TwoFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeZeroFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.Denied)
+	authAt, err = session.AuthenticationTime(authorization.Denied)
 	assert.EqualError(t, err, "invalid authorization level")
 	assert.Equal(t, timeZeroFactor, authAt)
 
@@ -125,15 +125,15 @@ func TestShouldSetSessionAuthenticationLevels(t *testing.T) {
 		AuthenticationMethodRefs:   oidc.AuthenticationMethodsReferences{UsernameAndPassword: true, Duo: true},
 	}, session)
 
-	authAt, err = session.AuthenticatedTime(authorization.OneFactor)
+	authAt, err = session.AuthenticationTime(authorization.OneFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeOneFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.TwoFactor)
+	authAt, err = session.AuthenticationTime(authorization.TwoFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeTwoFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.Denied)
+	authAt, err = session.AuthenticationTime(authorization.Denied)
 	assert.EqualError(t, err, "invalid authorization level")
 	assert.Equal(t, timeZeroFactor, authAt)
 }
@@ -158,15 +158,15 @@ func TestShouldSetSessionAuthenticationLevelsAMR(t *testing.T) {
 	session, err = provider.GetSession(ctx)
 	assert.NoError(t, err)
 
-	authAt, err := session.AuthenticatedTime(authorization.OneFactor)
+	authAt, err := session.AuthenticationTime(authorization.OneFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeOneFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.TwoFactor)
+	authAt, err = session.AuthenticationTime(authorization.TwoFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeZeroFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.Denied)
+	authAt, err = session.AuthenticationTime(authorization.Denied)
 	assert.EqualError(t, err, "invalid authorization level")
 	assert.Equal(t, timeZeroFactor, authAt)
 
@@ -190,15 +190,15 @@ func TestShouldSetSessionAuthenticationLevelsAMR(t *testing.T) {
 	assert.Equal(t, oidc.AuthenticationMethodsReferences{UsernameAndPassword: true, WebAuthn: true}, session.AuthenticationMethodRefs)
 	assert.True(t, session.AuthenticationMethodRefs.MultiFactorAuthentication())
 
-	authAt, err = session.AuthenticatedTime(authorization.OneFactor)
+	authAt, err = session.AuthenticationTime(authorization.OneFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeOneFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.TwoFactor)
+	authAt, err = session.AuthenticationTime(authorization.TwoFactor)
 	assert.NoError(t, err)
 	assert.Equal(t, timeTwoFactor, authAt)
 
-	authAt, err = session.AuthenticatedTime(authorization.Denied)
+	authAt, err = session.AuthenticationTime(authorization.Denied)
 	assert.EqualError(t, err, "invalid authorization level")
 	assert.Equal(t, timeZeroFactor, authAt)
 

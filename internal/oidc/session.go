@@ -38,22 +38,22 @@ func NewSessionWithAuthorizeRequest(ctx Context, issuer *url.URL, kid, username 
 	session = &Session{
 		DefaultSession: &openid.DefaultSession{
 			Claims: &jwt.IDTokenClaims{
-				Subject:                         consent.Subject.UUID.String(),
 				Issuer:                          issuer.String(),
-				AuthTime:                        authTime,
-				RequestedAt:                     consent.RequestedAt,
-				IssuedAt:                        ctx.GetClock().Now().UTC(),
+				Subject:                         consent.Subject.UUID.String(),
 				Nonce:                           requester.GetRequestForm().Get(ClaimNonce),
-				Extra:                           extra,
+				IssuedAt:                        ctx.GetClock().Now().UTC(),
+				RequestedAt:                     consent.RequestedAt,
+				AuthTime:                        authTime,
 				AuthenticationMethodsReferences: amr,
+				Extra:                           extra,
 			},
 			Headers: &jwt.Headers{
 				Extra: map[string]any{
 					JWTHeaderKeyIdentifier: kid,
 				},
 			},
-			Subject:  consent.Subject.UUID.String(),
 			Username: username,
+			Subject:  consent.Subject.UUID.String(),
 		},
 		ChallengeID:           model.NullUUID(consent.ChallengeID),
 		KID:                   kid,
