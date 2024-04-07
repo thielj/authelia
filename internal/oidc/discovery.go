@@ -60,7 +60,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 					ClaimSubject,
 					ClaimAuthenticationTime,
 					ClaimNonce,
-					ClaimPreferredEmail,
+					ClaimEmail,
 					ClaimEmailVerified,
 					ClaimEmailAlts,
 					ClaimGroups,
@@ -157,6 +157,7 @@ func NewOpenIDConnectWellKnownConfiguration(c *schema.IdentityProvidersOpenIDCon
 			RequestParameterSupported:     true,
 			RequestURIParameterSupported:  true,
 			RequireRequestURIRegistration: true,
+			ClaimsParameterSupported:      true,
 		},
 		OpenIDConnectPromptCreateDiscoveryOptions: &OpenIDConnectPromptCreateDiscoveryOptions{
 			PromptValuesSupported: []string{

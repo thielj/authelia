@@ -237,7 +237,7 @@ func TestNewOpenIDConnectProvider_GetOpenIDConnectWellKnownConfiguration(t *test
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimSubject)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthenticationTime)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimNonce)
-	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPreferredEmail)
+	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmail)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmailVerified)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmailAlts)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimGroups)
@@ -336,7 +336,7 @@ func TestNewOpenIDConnectProvider_GetOAuth2WellKnownConfiguration(t *testing.T) 
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimSubject)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimAuthenticationTime)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimNonce)
-	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimPreferredEmail)
+	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmail)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmailVerified)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimEmailAlts)
 	assert.Contains(t, disco.ClaimsSupported, oidc.ClaimGroups)
@@ -454,7 +454,7 @@ func TestNewOpenIDConnectWellKnownConfiguration_Copy(t *testing.T) {
 			RequestParameterSupported:                 true,
 			RequestURIParameterSupported:              true,
 			RequireRequestURIRegistration:             true,
-			ClaimsParameterSupported:                  false,
+			ClaimsParameterSupported:                  true,
 		},
 		OpenIDConnectFrontChannelLogoutDiscoveryOptions: &oidc.OpenIDConnectFrontChannelLogoutDiscoveryOptions{
 			FrontChannelLogoutSupported:        false,

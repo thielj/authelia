@@ -29,24 +29,23 @@ const (
 	ClaimExpirationTime                      = "exp"
 	ClaimAuthenticationTime                  = "auth_time"
 	ClaimIssuer                              = valueIss
-	ClaimSubject                             = "sub"
 	ClaimNonce                               = "nonce"
 	ClaimAudience                            = "aud"
 	ClaimGroups                              = "groups"
-	ClaimFullName                            = "name"
-	ClaimPreferredUsername                   = "preferred_username"
-	ClaimPreferredEmail                      = "email"
-	ClaimEmailVerified                       = "email_verified"
 	ClaimAuthorizedParty                     = "azp"
 	ClaimAuthenticationContextClassReference = "acr"
 	ClaimAuthenticationMethodsReference      = "amr"
 	ClaimClientIdentifier                    = valueClientID
-	ClaimScope                               = valueScope
 	ClaimScopeNonStandard                    = "scp"
 	ClaimExtra                               = "ext"
 	ClaimActive                              = "active"
 	ClaimUsername                            = "username"
 	ClaimTokenIntrospection                  = "token_introspection"
+	ClaimSubject                             = "sub"
+	ClaimFullName                            = "name"
+	ClaimPreferredUsername                   = "preferred_username"
+	ClaimEmail                               = "email"
+	ClaimEmailVerified                       = "email_verified"
 )
 
 const (
@@ -169,6 +168,7 @@ const (
 	FormParameterScope        = valueScope
 	FormParameterIssuer       = valueIss
 	FormParameterPrompt       = "prompt"
+	FormParameterClaims       = "claims"
 )
 
 const (
