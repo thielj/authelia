@@ -112,7 +112,7 @@ body:
         Provide a complete configuration file (the template will automatically put this content in a code block).
       render: 'yaml'
     validations:
-      required: false
+      required: true
   - type: 'textarea'
     id: 'build-info'
     attributes:
@@ -174,10 +174,10 @@ body:
             I have read the security policy and this bug report is not a security issue or security related issue
           required: true
         - label: |
-            I have either included the complete configuration file or I am sure it's unrelated to the configuration
+            I have either included the complete configuration file
           required: true
         - label: |
-            I have either included the complete debug / trace logs or the output of the build-info command if the logs are not relevant
+            I have included the complete debug / trace logs and the output of the build-info command
           required: true
         - label: |
             I have provided all of the required information in full with the only alteration being reasonable sanitization in accordance with the [Troubleshooting Sanitization](https://www.authelia.com/r/sanitize) reference guide
