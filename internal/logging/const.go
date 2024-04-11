@@ -20,5 +20,6 @@ const (
 	FieldRemoteIP   = "remote_ip"
 	FieldMethod     = "method"
 	FieldPath       = "path"
+	FieldPathRaw    = "path_raw"
 	FieldStatusCode = "status_code"
 )
