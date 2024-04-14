@@ -1,6 +1,7 @@
 export const IndexRoute: string = "/";
 export const AuthenticatedRoute: string = "/authenticated";
 export const ConsentRoute: string = "/consent";
+export const ConsentLoginRoute: string = "/consent/login";
 
 export const SecondFactorRoute: string = "/2fa";
 export const SecondFactorWebAuthnSubRoute: string = "/webauthn";

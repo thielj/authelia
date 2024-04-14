@@ -8,6 +8,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import NotificationBar from "@components/NotificationBar";
 import {
+    ConsentLoginRoute,
     ConsentRoute,
     IndexRoute,
     LogoutRoute,
@@ -24,6 +25,7 @@ import { Notification } from "@models/Notifications";
 import { getBasePath } from "@utils/BasePath";
 import { getDuoSelfEnrollment, getRememberMe, getResetPassword, getResetPasswordCustomURL } from "@utils/Configuration";
 import LoadingPage from "@views/LoadingPage/LoadingPage";
+import ConsentLoginForm from "@views/LoginPortal/ConsentView/ConsentLoginForm.tsx";
 import LoginPortal from "@views/LoginPortal/LoginPortal";
 
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -64,6 +66,7 @@ const App: React.FC<Props> = (props: Props) => {
                                     <Route path={ResetPasswordStep1Route} element={<ResetPasswordStep1 />} />
                                     <Route path={ResetPasswordStep2Route} element={<ResetPasswordStep2 />} />
                                     <Route path={LogoutRoute} element={<SignOut />} />
+                                    <Route path={ConsentLoginRoute} element={<ConsentLoginForm />} />
                                     <Route path={ConsentRoute} element={<ConsentView />} />
                                     <Route path={RevokeOneTimeCodeRoute} element={<RevokeOneTimeCodeView />} />
                                     <Route path={RevokeResetPasswordRoute} element={<RevokeResetPasswordTokenView />} />

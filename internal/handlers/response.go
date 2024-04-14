@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"net/url"
-	"path"
 	"time"
 
 	"github.com/google/uuid"
@@ -211,26 +210,42 @@ func handleOIDCWorkflowResponseWithID(ctx *middlewares.AutheliaCtx, userSession 
 		return
 	}
 
+	var (
+		targetURL *url.URL
+		form      url.Values
+	)
+
+	targetURL = ctx.RootURL()
+
+	if form, err = consent.GetForm(); err != nil {
+		ctx.Error(fmt.Errorf("unable to get authorization form values from consent session with challenge id '%s': %w", consent.ChallengeID, err), messageAuthenticationFailed)
+
+		return
+	}
+
+	if oidc.AuthorizeRequestFormRequiresLogin(form, consent.RequestedAt, userSession.LastAuthenticatedTime()) {
+		query := targetURL.Query()
+
+		query.Set(queryArgWorkflow, workflowOpenIDConnect)
+		query.Set(queryArgWorkflowID, workflowID.String())
+
+		targetURL.JoinPath("/consent/reauthenticate")
+		targetURL.RawQuery = query.Encode()
+
+		if err = ctx.SetJSONBody(redirectResponse{Redirect: targetURL.String()}); err != nil {
+			ctx.Logger.Errorf("Unable to set default redirection URL in body: %s", err)
+		}
+
+		return
+	}
+
 	level := client.GetAuthorizationPolicyRequiredLevel(authorization.Subject{Username: userSession.Username, Groups: userSession.Groups, IP: ctx.RemoteIP()})
 
 	switch {
 	case authorization.IsAuthLevelSufficient(userSession.AuthenticationLevel, level), level == authorization.Denied:
-		var (
-			targetURL *url.URL
-			form      url.Values
-		)
-
-		targetURL = ctx.RootURL()
-
-		if form, err = consent.GetForm(); err != nil {
-			ctx.Error(fmt.Errorf("unable to get authorization form values from consent session with challenge id '%s': %w", consent.ChallengeID, err), messageAuthenticationFailed)
-
-			return
-		}
-
 		form.Set(queryArgConsentID, workflowID.String())
 
-		targetURL.Path = path.Join(targetURL.Path, oidc.EndpointPathAuthorization)
+		targetURL.JoinPath(oidc.EndpointPathAuthorization)
 		targetURL.RawQuery = form.Encode()
 
 		if err = ctx.SetJSONBody(redirectResponse{Redirect: targetURL.String()}); err != nil {

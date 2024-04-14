@@ -1,24 +1,20 @@
 import React, { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Alert, AlertTitle, Button, Checkbox, FormControl, FormControlLabel, Grid, Link, Theme } from "@mui/material";
+import { Alert, AlertTitle, Button, FormControl, Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
-import makeStyles from "@mui/styles/makeStyles";
 import { BroadcastChannel } from "broadcast-channel";
-import classnames from "classnames";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { ResetPasswordStep1Route } from "@constants/Routes";
 import { RedirectionURL, RequestMethod } from "@constants/SearchParams";
 import { useNotifications } from "@hooks/NotificationsContext";
 import { useQueryParam } from "@hooks/QueryParam";
 import { useWorkflow } from "@hooks/Workflow";
 import LoginLayout from "@layouts/LoginLayout";
 import { IsCapsLockModified } from "@services/CapsLock";
-import { postFirstFactor } from "@services/FirstFactor";
+import { postFirstFactorReauthenticate } from "@services/FirstFactor";
 
 export interface Props {
-    disabled: boolean;
     rememberMe: boolean;
 
     resetPassword: boolean;
@@ -30,7 +26,7 @@ export interface Props {
     onChannelStateChange: () => void;
 }
 
-const FirstFactorForm = function (props: Props) {
+const ConsentLoginForm = function (props: Props) {
     const { t: translate } = useTranslation();
 
     const navigate = useNavigate();
@@ -41,23 +37,18 @@ const FirstFactorForm = function (props: Props) {
 
     const loginChannel = useMemo(() => new BroadcastChannel<boolean>("login"), []);
 
-    const [rememberMe, setRememberMe] = useState(false);
-    const [username, setUsername] = useState("");
-    const [usernameError, setUsernameError] = useState(false);
+    const [disabled, setDisabled] = useState(false);
     const [password, setPassword] = useState("");
     const [passwordCapsLock, setPasswordCapsLock] = useState(false);
     const [passwordCapsLockPartial, setPasswordCapsLockPartial] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
 
-    const usernameRef = useRef() as MutableRefObject<HTMLInputElement>;
     const passwordRef = useRef() as MutableRefObject<HTMLInputElement>;
 
-    const styles = useStyles();
-
     useEffect(() => {
-        const timeout = setTimeout(() => usernameRef.current.focus(), 10);
+        const timeout = setTimeout(() => passwordRef.current.focus(), 10);
         return () => clearTimeout(timeout);
-    }, [usernameRef]);
+    }, [passwordRef]);
 
     useEffect(() => {
         loginChannel.addEventListener("message", (authenticated) => {
@@ -67,30 +58,17 @@ const FirstFactorForm = function (props: Props) {
         });
     }, [loginChannel, redirectionURL, props]);
 
-    const disabled = props.disabled;
-
-    const handleRememberMeChange = () => {
-        setRememberMe(!rememberMe);
-    };
-
     const handleSignIn = useCallback(async () => {
-        if (username === "" || password === "") {
-            if (username === "") {
-                setUsernameError(true);
-            }
+        if (password === "") {
+            setPasswordError(true);
 
-            if (password === "") {
-                setPasswordError(true);
-            }
             return;
         }
 
         props.onAuthenticationStart();
         try {
-            const res = await postFirstFactor(
-                username,
+            const res = await postFirstFactorReauthenticate(
                 password,
-                rememberMe,
                 redirectionURL,
                 requestMethod,
                 workflow,
@@ -111,53 +89,23 @@ const FirstFactorForm = function (props: Props) {
         password,
         props,
         redirectionURL,
-        rememberMe,
         requestMethod,
         translate,
-        username,
         workflow,
         workflowID,
     ]);
 
-    const handleResetPasswordClick = () => {
-        if (props.resetPassword) {
-            if (props.resetPasswordCustomURL !== "") {
-                window.open(props.resetPasswordCustomURL);
-            } else {
-                navigate(ResetPasswordStep1Route);
-            }
-        }
-    };
-
-    const handleUsernameKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLDivElement>) => {
-            if (event.key === "Enter") {
-                if (!username.length) {
-                    setUsernameError(true);
-                } else if (username.length && password.length) {
-                    handleSignIn().catch(console.error);
-                } else {
-                    setUsernameError(false);
-                    passwordRef.current.focus();
-                }
-            }
-        },
-        [handleSignIn, password.length, username.length],
-    );
-
     const handlePasswordKeyDown = useCallback(
         (event: React.KeyboardEvent<HTMLDivElement>) => {
             if (event.key === "Enter") {
-                if (!username.length) {
-                    usernameRef.current.focus();
-                } else if (!password.length) {
+                if (!password.length) {
                     passwordRef.current.focus();
                 }
                 handleSignIn().catch(console.error);
                 event.preventDefault();
             }
         },
-        [handleSignIn, password.length, username.length],
+        [handleSignIn, password.length],
     );
 
     const handlePasswordKeyUp = useCallback(
@@ -184,42 +132,10 @@ const FirstFactorForm = function (props: Props) {
         [password.length],
     );
 
-    const handleRememberMeKeyDown = useCallback(
-        (event: React.KeyboardEvent<HTMLButtonElement>) => {
-            if (event.key === "Enter") {
-                if (!username.length) {
-                    usernameRef.current.focus();
-                } else if (!password.length) {
-                    passwordRef.current.focus();
-                }
-                handleSignIn().catch(console.error);
-            }
-        },
-        [handleSignIn, password.length, username.length],
-    );
-
     return (
-        <LoginLayout id="first-factor-stage" title={translate("Sign in")}>
+        <LoginLayout id="first-factor-reauthenticate-stage" title={translate("Sign in")}>
             <FormControl id={"form-login"}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <TextField
-                            inputRef={usernameRef}
-                            id="username-textfield"
-                            label={translate("Username")}
-                            variant="outlined"
-                            required
-                            value={username}
-                            error={usernameError}
-                            disabled={disabled}
-                            fullWidth
-                            onChange={(v) => setUsername(v.target.value)}
-                            onFocus={() => setUsernameError(false)}
-                            autoCapitalize="none"
-                            autoComplete="username"
-                            onKeyDown={handleUsernameKeyDown}
-                        />
-                    </Grid>
                     <Grid item xs={12}>
                         <TextField
                             inputRef={passwordRef}
@@ -249,25 +165,6 @@ const FirstFactorForm = function (props: Props) {
                             </Alert>
                         </Grid>
                     ) : null}
-                    {props.rememberMe ? (
-                        <Grid item xs={12} className={classnames(styles.actionRow)}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        id="remember-checkbox"
-                                        disabled={disabled}
-                                        checked={rememberMe}
-                                        onChange={handleRememberMeChange}
-                                        onKeyDown={handleRememberMeKeyDown}
-                                        value="rememberMe"
-                                        color="primary"
-                                    />
-                                }
-                                className={styles.rememberMe}
-                                label={translate("Remember me")}
-                            />
-                        </Grid>
-                    ) : null}
                     <Grid item xs={12}>
                         <Button
                             id="sign-in-button"
@@ -280,43 +177,10 @@ const FirstFactorForm = function (props: Props) {
                             {translate("Sign in")}
                         </Button>
                     </Grid>
-                    {props.resetPassword ? (
-                        <Grid item xs={12} className={classnames(styles.actionRow, styles.flexEnd)}>
-                            <Link
-                                id="reset-password-button"
-                                component="button"
-                                onClick={handleResetPasswordClick}
-                                className={styles.resetLink}
-                                underline="hover"
-                            >
-                                {translate("Reset password?")}
-                            </Link>
-                        </Grid>
-                    ) : null}
                 </Grid>
             </FormControl>
         </LoginLayout>
     );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-    actionRow: {
-        display: "flex",
-        flexDirection: "row",
-        marginTop: theme.spacing(-1),
-        marginBottom: theme.spacing(-1),
-    },
-    resetLink: {
-        cursor: "pointer",
-        paddingTop: 13.5,
-        paddingBottom: 13.5,
-    },
-    rememberMe: {
-        flexGrow: 1,
-    },
-    flexEnd: {
-        justifyContent: "flex-end",
-    },
-}));
-
-export default FirstFactorForm;
+export default ConsentLoginForm;
