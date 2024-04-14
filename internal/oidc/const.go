@@ -187,6 +187,7 @@ const (
 	FormParameterScope        = valueScope
 	FormParameterIssuer       = valueIss
 	FormParameterPrompt       = "prompt"
+	FormParameterMaximumAge   = "max_age"
 	FormParameterClaims       = "claims"
 )
 
